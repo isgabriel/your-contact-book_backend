@@ -3,7 +3,7 @@ import { noPasswordNoContactsUserSchema } from "./users.schemas";
 
 const phoneRegex = /^\+\d{2}\s\d{2}\s\d{9}$/;
 
-const contactSchema = z.object({
+const contactSchema: z.ZodObject<any> = z.object({
     id: z.number(),
     name: z.string().max(256),
     email: z.string().email().max(256),
@@ -18,11 +18,18 @@ const contactSchema = z.object({
     user: noPasswordNoContactsUserSchema,
 });
 
-const contactSchemaRequest = contactSchema.omit({
+const noUserContactSchema = contactSchema.omit({ user: true });
+const contactSchemaRequest = noUserContactSchema.omit({
     id: true,
     registerDate: true,
 });
 
-const noUserContactSchema = contactSchema.omit({ user: true });
+const contactUpdateSchema = contactSchemaRequest.partial();
 
-export { phoneRegex, contactSchema, contactSchemaRequest, noUserContactSchema };
+export {
+    phoneRegex,
+    contactSchema,
+    noUserContactSchema,
+    contactSchemaRequest,
+    contactUpdateSchema,
+};

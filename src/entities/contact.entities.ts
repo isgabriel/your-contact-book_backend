@@ -1,24 +1,30 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from "typeorm";
 import { User } from "./user.entities";
 
 @Entity("contacts")
 class Contact {
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-    @Column()
+    @Column({ type: "varchar", length: 256, nullable: false })
     name: string;
 
-    @Column({ unique: true })
+    @Column({ type: "varchar", length: 256, unique: true, nullable: false })
     email: string;
 
-    @Column()
-    phone: number;
+    @Column({ type: "varchar", length: 20, nullable: false })
+    phone: string;
 
-    @Column({ type: "date" })
-    registerDate: string | Date;
+    @CreateDateColumn({ type: "date" })
+    registerDate: string;
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, (user) => user.contacts)
     user: User;
 }
 

@@ -1,28 +1,45 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+    BeforeInsert,
+    BeforeUpdate,
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinTable,
+    OneToMany,
+    PrimaryGeneratedColumn,
+} from "typeorm";
 import { Contact } from "./contact.entities";
+import { hashSync } from "bcryptjs";
 
 @Entity("users")
 class User {
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-    @Column()
+    @Column({ type: "varchar", length: 256, nullable: false })
     name: string;
 
-    @Column({ unique: true })
+    @Column({ type: "varchar", length: 256, nullable: false, unique: true })
     email: string;
 
-    @Column()
+    @Column({ type: "varchar", length: 256, nullable: false })
     password: string;
 
-    @Column()
-    phone: number;
+    @Column({ type: "varchar", length: 20, nullable: false })
+    phone: string;
 
-    @Column({ type: "date" })
+    @CreateDateColumn({ type: "date" })
     registerDate: string | Date;
 
-    @OneToMany(() => Contact, (contact) => contact.user)
+    @OneToMany(() => Contact, (contact) => contact.user, { cascade: true })
+    @JoinTable()
     contacts: Contact[];
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    encryptInsert() {
+        this.password = hashSync(this.password, 10);
+    }
 }
 
 export { User };

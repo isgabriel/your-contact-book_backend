@@ -21,7 +21,7 @@ const userSchema = z.object({
             "Invalid phone number, must be like: +00 00 000000000"
         ),
     registerDate: z.string(),
-    contacts: z.array(noUserContactSchema),
+    contacts: z.array(noUserContactSchema).optional(),
 });
 
 const userSchemaRequest = userSchema.omit({

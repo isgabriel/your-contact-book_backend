@@ -42,7 +42,8 @@ const updateUserController = async (
     req: Request,
     res: Response
 ): Promise<Response> => {
-    const updateUser = await updateUserService(req.body, req.userById);
+    const id: number = parseInt(req.params.id);
+    const updateUser = await updateUserService(req.body, id);
 
     return res.status(200).json(updateUser);
 };

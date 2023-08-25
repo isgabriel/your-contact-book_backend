@@ -49,7 +49,7 @@ userRoutes.get(
     getLoggedUserController
 );
 userRoutes.get(
-    "/:id/contacts",
+    "/contacts/:id",
     ensureUserExistsMiddleware,
     ensureTokenIsValidMiddleware,
     ensureIsAccountOwnerMiddleware,

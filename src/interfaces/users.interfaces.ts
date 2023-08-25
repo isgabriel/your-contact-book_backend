@@ -6,6 +6,7 @@ import {
     userUpdateSchema,
 } from "../schemas/users.schemas";
 import { userLoginSchema } from "../schemas/users.schemas";
+import { DeepPartial } from "typeorm";
 
 type TUser = z.infer<typeof userSchema>;
 type TUserRequest = z.infer<typeof userSchemaRequest>;
@@ -14,4 +15,13 @@ type TUserUpdate = z.infer<typeof userUpdateSchema>;
 
 type TLoginRequest = z.infer<typeof userLoginSchema>;
 
-export { TUser, TUserRequest, TUserResponse, TUserUpdate, TLoginRequest };
+type TUserPatch = DeepPartial<TUserRequest>;
+
+export {
+    TUser,
+    TUserRequest,
+    TUserResponse,
+    TUserUpdate,
+    TLoginRequest,
+    TUserPatch,
+};

@@ -15,20 +15,24 @@
 3.  Instale as dependências do projeto utilizando o npm:
 
         npm install
+    
+5.  Rode as migrations para criar as tabelas no banco de dados:
 
-4.  Inicie a API localmente:
+        npm typeorm migration:run -c src/data-source.ts
+    
+6.  Inicie a API localmente:
 
         npm run dev
 
-5.  Sua API já está rodando localmente na porta 3000.
+7.  Sua API já está rodando localmente na porta 3000.
 
         http://localhost:3000
 
-6.  Acesse o front-end do projeto:
+8.  Acesse o front-end do projeto:
 
     <a href="https://github.com/isgabriel/your-contact-book_frontend">Acessar repositório front-end</a>
 
-    <a href="">Acessar deploy front-end</a>
+    <a href="https://your-contact-book.vercel.app">Acessar deploy front-end</a>
 
 # Rotas
 

@@ -9,7 +9,7 @@
         "start": "node dist/server.js",
         "typeorm": "typeorm-ts-node-commonjs",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "vercel-build": "npm typeorm migration:run -c src/data-source.ts deploy"
+        "vercel-build": "npm typeorm migration:run -c src/data-source.ts"
     },
     "keywords": [],
     "author": "Gabriel <itsgabrielmontenegro@gmail.com>",

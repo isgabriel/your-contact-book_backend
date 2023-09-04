@@ -9,7 +9,7 @@ import { contactRoutes } from "./routes/contact.routes";
 const app: Application = express();
 
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: "https://your-contact-book.vercel.app" }));
 
 app.use("/users", userRoutes);
 app.use("/contacts", contactRoutes);

@@ -5,11 +5,10 @@
     "main": "index.js",
     "scripts": {
         "dev": "ts-node-dev --ignore-watch node_modules src/server.ts",
-        "build": "tsc",
         "start": "node dist/server.js",
         "typeorm": "typeorm-ts-node-commonjs",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "vercel-build": "npm typeorm migration:run -c src/data-source.ts deploy"
+        "build": "tsc"
     },
     "keywords": [],
     "author": "Gabriel <itsgabrielmontenegro@gmail.com>",

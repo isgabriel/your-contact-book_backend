@@ -1,12 +1,20 @@
+import { Repository } from "typeorm";
+import { Contact } from "../../entities";
 import { AppDataSource } from "../../data-source";
-import { Contact } from "../../entities/contact.entities";
+import { AppError } from "../../error/error";
 
-const deleteContactService = async (contactId: number) => {
-    const contactRepository = AppDataSource.getRepository(Contact);
+const deleteContactService = async (id: number) => {
+  const contactRepository: Repository<Contact> =
+    AppDataSource.getRepository(Contact);
+  const dataId: Contact | null = await contactRepository.findOneBy({
+    id: id,
+  });
 
-    const deletedContact = contactRepository.delete(contactId);
+  if (!dataId) {
+    throw new AppError("task not found", 404);
+  }
 
-    return deletedContact;
+  await contactRepository.remove(dataId);
 };
 
 export { deleteContactService };

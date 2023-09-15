@@ -1,31 +1,39 @@
 import {
     Column,
     CreateDateColumn,
+    DeleteDateColumn,
     Entity,
     ManyToOne,
     PrimaryGeneratedColumn,
+    UpdateDateColumn,
 } from "typeorm";
-import { User } from "./user.entities";
+import User from "./user.entities";
 
-@Entity("contacts")
+@Entity("Contacts")
 class Contact {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn("increment")
     id: number;
 
-    @Column({ type: "varchar", length: 256, nullable: false })
-    name: string;
+    @Column({ type: "varchar", length: 60 })
+    fullname: string;
 
-    @Column({ type: "varchar", length: 256, unique: true, nullable: false })
+    @Column({ type: "varchar", length: 60 })
     email: string;
 
-    @Column({ type: "varchar", length: 20, nullable: false })
-    phone: string;
+    @Column({ type: "varchar", length: 11 })
+    telephone: string;
 
     @CreateDateColumn({ type: "date" })
-    registerDate: string;
+    createdAt: string;
 
-    @ManyToOne(() => User, (user) => user.contacts)
+    @UpdateDateColumn({ type: "date" })
+    updatedAt: string;
+
+    @DeleteDateColumn({ nullable: true, type: "date" })
+    deletedAt: string | null;
+
+    @ManyToOne(() => User)
     user: User;
 }
 
-export { Contact };
+export default Contact;

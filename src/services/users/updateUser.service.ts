@@ -1,43 +1,36 @@
 import { Repository } from "typeorm";
+import { User } from "../../entities";
+import { TuserPatch, TuserResponse } from "../../interfaces/user.interfaces";
 import { AppDataSource } from "../../data-source";
-import { User } from "../../entities/user.entities";
-import {
-    noPasswordNoContactsUserSchema,
-    userSchemaResponse,
-} from "../../schemas/users.schemas";
-import { TUserPatch, TUserResponse } from "../../interfaces/users.interfaces";
+import { userResponseSchema } from "../../schemas/user.schema";
 
 const updateUserService = async (
-    payload: TUserPatch,
+    data: TuserPatch,
     id: number
-): Promise<TUserResponse> => {
+): Promise<TuserResponse> => {
     const userRepository: Repository<User> = AppDataSource.getRepository(User);
+    const user = await userRepository.findOneBy({ id: id });
 
-    const oldData: User | null = await userRepository.findOneBy({
-        id: id,
-    });
+    const updatedUser = userRepository.create({ ...user, ...data });
 
-    const { ...userDataId } = payload;
-
-    const user: User = userRepository.create({
-        ...oldData,
-        ...userDataId,
-    });
-    await userRepository.save(user);
-
-    const parse: TUserResponse = userSchemaResponse.parse(user);
-    return parse;
-
-    // const updatedUser = userRepository.create({
-    //     ...oldData,
-    //     ...payload,
+    // const oldData: User | null = await userRepository.findOneBy({
+    //     id: id,
     // });
 
-    // await userRepository.save(updatedUser);
+    // const { ...userDataId } = data;
 
-    // const serializedUser = noPasswordNoContactsUserSchema.parse(updatedUser);
+    // const user: User = userRepository.create({
+    //     ...oldData,
+    //     ...userDataId,
+    // });
 
-    // return serializedUser;
+    // await userRepository.save(user);
+    await userRepository.save(updatedUser);
+
+    // const parse: TuserResponse = userResponseSchema.parse(user);
+
+    // return parse;
+    return userResponseSchema.parse(updatedUser);
 };
 
 export { updateUserService };

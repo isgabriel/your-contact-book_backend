@@ -1,31 +1,34 @@
 import { NextFunction, Request, Response } from "express";
-import { AppError } from "../errors/AppError";
-import jwt from "jsonwebtoken";
+import { verify } from "jsonwebtoken";
+import { AppError } from "../error/error";
+import "dotenv/config";
 
-const ensureTokenIsValidMiddleware = (
-    req: Request,
-    res: Response,
+const ensureTokenIsValid = async (
+    request: Request,
+    response: Response,
     next: NextFunction
-) => {
-    let token: string | undefined = req.headers.authorization;
+): Promise<Response | void> => {
+    const authentic: string | undefined = request.headers.authorization;
 
-    if (!token) {
-        throw new AppError("Authorization token is required", 401);
+    if (!authentic) {
+        throw new AppError("Missing bearer token", 401);
     }
 
-    token = token?.split(" ")[1];
+    const [_bearer, token] = authentic.split(" ");
 
-    jwt.verify(
+    verify(
         token,
-        process.env.SECRET_KEY! || "secret",
-        (error: unknown, decoded: any) => {
+        String(process.env.SECRET_KEY),
+        (error: any, decoded: any) => {
             if (error) {
-                throw new AppError("Invalid authorization token", 401);
+                throw new AppError(error.message, 401);
             }
-            req.loggedUserId = parseInt(decoded.sub);
-            return next();
+
+            response.locals.id = decoded.sub;
         }
     );
+
+    return next();
 };
 
-export { ensureTokenIsValidMiddleware };
+export { ensureTokenIsValid };

@@ -1,74 +1,64 @@
 import { Request, Response } from "express";
-import { getUserContactsService } from "../services/contacts/getUserContacts.service";
+import {
+  TcontactPatch,
+  TcontactRequest,
+  TcontactResponse,
+} from "../interfaces/contact.interfaces";
 import { createContactService } from "../services/contacts/createContact.service";
-import { noPasswordNoContactsUserSchema } from "../schemas/users.schemas";
-import { updateContactService } from "../services/contacts/updateContact.service";
+import { readContactService } from "../services/contacts/readContact.service";
+import { patchContactService } from "../services/contacts/patchContact.service";
 import { deleteContactService } from "../services/contacts/deleteContact.service";
 
 const createContactController = async (
-    req: Request,
-    res: Response
+  request: Request,
+  response: Response
 ): Promise<Response> => {
-    const createdContact = await createContactService(
-        req.body,
-        req.loggedUserId
-    );
+  const data: TcontactRequest = request.body;
 
-    return res.status(201).json(createdContact);
-};
-const getUserContactsController = async (
-    req: Request,
-    res: Response
-): Promise<Response> => {
-    const contacts = await getUserContactsService(Number(req.params.id));
+  const id: number = parseInt(response.locals.id);
 
-    return res.status(200).json(contacts);
+  const newData: TcontactRequest = await createContactService(data, id);
+
+  return response.status(201).json(newData);
 };
 
-const updateContactController = async (
-    req: Request,
-    res: Response
+const readContactController = async (
+  request: Request,
+  response: Response
 ): Promise<Response> => {
-    const updatedContact = await updateContactService(
-        req.body,
-        req.contactById
-    );
+  const userId: number = parseInt(response.locals.id);
 
-    return res.status(201).json(updatedContact);
+  const data: TcontactResponse = await readContactService(userId);
+
+  return response.status(200).json(data);
+};
+
+const patchContactController = async (
+  request: Request,
+  response: Response
+): Promise<Response> => {
+  const data: TcontactPatch = request.body;
+  const id: number = parseInt(request.params.id);
+
+  const newData: TcontactPatch = await patchContactService(data, id);
+
+  return response.status(200).json(newData);
 };
 
 const deleteContactController = async (
-    req: Request,
-    res: Response
-): Promise<Response> => {
-    const deletedContact = deleteContactService(Number(req.params.id));
+  request: Request,
+  response: Response
+): Promise<void> => {
+  const id: number = parseInt(request.params.id);
 
-    return res.status(204).json(deletedContact);
-};
+  await deleteContactService(id);
 
-const retrieveContactController = async (
-    req: Request,
-    res: Response
-): Promise<Response> => {
-    const contact = req.contactById;
-    const serializedUser = noPasswordNoContactsUserSchema.parse(contact.user);
-    const serializedContact = { ...contact, user: serializedUser };
-
-    return res.status(200).json(serializedContact);
-};
-
-const getLoggedUserController = async (
-    req: Request,
-    res: Response
-): Promise<Response> => {
-    return res.status(200).json(req.userById);
+  response.status(204).send();
 };
 
 export {
-    createContactController,
-    getUserContactsController,
-    updateContactController,
-    deleteContactController,
-    retrieveContactController,
-    getLoggedUserController,
+  deleteContactController,
+  patchContactController,
+  readContactController,
+  createContactController,
 };

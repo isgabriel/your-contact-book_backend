@@ -1,68 +1,76 @@
 import { Request, Response } from "express";
 import { createUserService } from "../services/users/createUser.service";
-import { userLoginService } from "../services/users/login.service";
-import { getUsersService } from "../services/users/getUsers.service";
+import {
+  TuserPatch,
+  TuserRequest,
+  TuserResponse,
+} from "../interfaces/user.interfaces";
+import { readUserService } from "../services/users/readUser.service";
 import { updateUserService } from "../services/users/updateUser.service";
 import { deleteUserService } from "../services/users/deleteUser.service";
+import { retrieveUserService } from "../services/users/retrieveUser.service";
 
 const createUserController = async (
-    req: Request,
-    res: Response
+  request: Request,
+  response: Response
 ): Promise<Response> => {
-    const newUser = await createUserService(req.body);
+  const data: TuserRequest = request.body;
 
-    return res.status(201).json(newUser);
-};
-const userLoginController = async (req: Request, res: Response) => {
-    const { email, password } = req.body;
+  const newData: TuserResponse = await createUserService(data);
 
-    const token = await userLoginService({ email, password });
-
-    return res.json({ token });
+  return response.status(201).json(newData);
 };
 
-const listUsersController = async (
-    req: Request,
-    res: Response
+const readUserController = async (
+  request: Request,
+  response: Response
 ): Promise<Response> => {
-    const usersList = await getUsersService();
+  const id: number = parseInt(request.params.id);
 
-    return res.status(200).json(usersList);
+  const data: TuserResponse = await readUserService(id);
+
+  return response.status(200).json(data);
 };
 
-const retrieveUsersController = async (
-    req: Request,
-    res: Response
+const retrieveUserController = async (
+  request: Request,
+  response: Response
 ): Promise<Response> => {
-    const user = req.userById;
-    return res.status(200).json(user);
+  const id: number = parseInt(response.locals.id);
+
+  const newData = await retrieveUserService(id);
+
+  return response.status(200).json(newData);
 };
 
 const updateUserController = async (
-    req: Request,
-    res: Response
+  request: Request,
+  response: Response
 ): Promise<Response> => {
-    const id: number = parseInt(req.params.id);
-    const updateUser = await updateUserService(req.body, id);
+  const data: TuserPatch = request.body;
 
-    return res.status(200).json(updateUser);
+  const id: number = parseInt(request.params.id);
+
+  const newData = await updateUserService(data, id);
+
+  return response.status(200).json(newData);
 };
 
 const deleteUserController = async (
-    req: Request,
-    res: Response
+  request: Request,
+  response: Response
 ): Promise<Response> => {
-    // const userId = Number(req.params.id);
-    await deleteUserService(Number(req.params.id));
+  const id: number = parseInt(request.params.id);
 
-    return res.status(204).send();
+  await deleteUserService(id);
+
+  return response.status(204).send();
 };
 
 export {
-    createUserController,
-    userLoginController,
-    listUsersController,
-    retrieveUsersController,
-    updateUserController,
-    deleteUserController,
+  createUserController,
+  readUserController,
+  retrieveUserController,
+  updateUserController,
+  deleteUserController,
 };

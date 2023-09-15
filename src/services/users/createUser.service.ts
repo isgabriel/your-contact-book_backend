@@ -1,20 +1,21 @@
 import { Repository } from "typeorm";
 import { AppDataSource } from "../../data-source";
-import { User } from "../../entities/user.entities";
-import { TUserRequest, TUserResponse } from "../../interfaces/users.interfaces";
-import { noPasswordNoContactsUserSchema } from "../../schemas/users.schemas";
+import { User } from "../../entities";
+import { TuserRequest, TuserResponse } from "../../interfaces/user.interfaces";
+import { userResponseSchema } from "../../schemas/user.schema";
 
 const createUserService = async (
-    data: TUserRequest
-): Promise<TUserResponse> => {
-    const userRepository: Repository<User> = AppDataSource.getRepository(User);
+  data: TuserRequest
+): Promise<TuserResponse> => {
+  const userRepository: Repository<User> = AppDataSource.getRepository(User);
 
-    const user = userRepository.create(data);
-    await userRepository.save(user);
+  const user: User = userRepository.create(data);
 
-    const serializerUser = noPasswordNoContactsUserSchema.parse(user);
+  await userRepository.save(user);
 
-    return serializerUser;
+  const parse: TuserResponse = userResponseSchema.parse(user);
+
+  return parse;
 };
 
 export { createUserService };

@@ -1,45 +1,55 @@
+import { getRounds, hashSync } from "bcryptjs";
 import {
-    BeforeInsert,
-    BeforeUpdate,
+    Entity,
+    PrimaryGeneratedColumn,
     Column,
     CreateDateColumn,
-    Entity,
-    JoinTable,
+    UpdateDateColumn,
+    DeleteDateColumn,
+    BeforeInsert,
+    BeforeUpdate,
     OneToMany,
-    PrimaryGeneratedColumn,
 } from "typeorm";
-import { Contact } from "./contact.entities";
-import { hashSync } from "bcryptjs";
+import Contact from "./contact.entities";
 
-@Entity("users")
+@Entity("Users")
 class User {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn("increment")
     id: number;
 
-    @Column({ type: "varchar", length: 256, nullable: false })
-    name: string;
+    @Column({ type: "varchar", length: 60 })
+    fullname: string;
 
-    @Column({ type: "varchar", length: 256, nullable: false, unique: true })
+    @Column({ type: "varchar", length: 60 })
     email: string;
 
-    @Column({ type: "varchar", length: 256, nullable: false })
+    @Column({ type: "varchar", length: 11 })
+    telephone: string;
+
+    @Column({ type: "varchar", length: 120 })
     password: string;
 
-    @Column({ type: "varchar", length: 20, nullable: false })
-    phone: string;
-
     @CreateDateColumn({ type: "date" })
-    registerDate: string | Date;
+    createdAt: string;
 
-    @OneToMany(() => Contact, (contact) => contact.user, { cascade: true })
-    @JoinTable()
-    contacts: Contact[];
+    @UpdateDateColumn({ type: "date" })
+    updatedAt: string;
+
+    @DeleteDateColumn({ nullable: true, type: "date" })
+    deletedAt: string | null;
+
+    @OneToMany(() => Contact, (contact) => contact.user)
+    contact: Contact[];
 
     @BeforeInsert()
     @BeforeUpdate()
-    encryptInsert() {
-        this.password = hashSync(this.password, 10);
+    cryptPassword() {
+        const script = getRounds(this.password);
+
+        if (!script) {
+            this.password = hashSync(this.password, 10);
+        }
     }
 }
 
-export { User };
+export default User;
